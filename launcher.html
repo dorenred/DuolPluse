@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DuolPluse Launcher</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #0e0e1a, #1a1a2e);
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .launcher { text-align: center; }
+    .logo {
+      font-size: 80px; margin-bottom: 20px;
+      background: linear-gradient(135deg, #58cc02, #1cb0f6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .title {
+      font-size: 48px; font-weight: 900; margin-bottom: 10px;
+      background: linear-gradient(135deg, #58cc02, #1cb0f6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle { color: #8a8aa0; font-size: 18px; margin-bottom: 40px; }
+    .launch-btn {
+      background: linear-gradient(135deg, #58cc02, #1cb0f6);
+      border: none; border-bottom: 8px solid #45a501;
+      padding: 24px 80px; border-radius: 60px;
+      font-weight: 900; font-size: 32px; color: white;
+      cursor: pointer; box-shadow: 0 10px 30px rgba(88,204,2,0.3);
+      text-transform: uppercase; letter-spacing: 4px;
+    }
+    .launch-btn:hover { transform: scale(1.05); }
+    .launch-btn:active { transform: translateY(5px); border-bottom-width: 3px; }
+    .version { margin-top: 30px; color: #5a5a7a; font-size: 14px; }
+  </style>
+</head>
+<body>
+<div class="launcher">
+  <div class="logo">🦉⚡</div>
+  <div class="title">DuolPluse</div>
+  <div class="subtitle">Учи языки с удовольствием</div>
+  <button class="launch-btn" onclick="window.open('duolpluse.html', '_blank', 'width=420,height=900,left='+(screen.width-420)/2+',top='+(screen.height-900)/2)">LAUNCH</button>
+  <div class="version">v2.0 • 50+ заданий</div>
+</div>
+</body>
+</html>

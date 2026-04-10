@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DuolPluse • Английский</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Nunito',sans-serif;width:100vw;height:100vh;overflow:hidden;position:fixed}
+    body.light{background:#fff;--bg:#fff;--bg2:#fafaff;--bg3:#f7f7fc;--text:#1f1f2e;--text2:#4a4a6a;--muted:#8a8aa0;--border:#e8e8f2;--card:#fafaff;--prog:#e5e5e5}
+    body.dark{background:#0e0e1a;--bg:#1a1a2e;--bg2:#16213e;--bg3:#1a1a2e;--text:#fff;--text2:#c0c0e0;--muted:#8888aa;--border:#2a2a4a;--card:#16213e;--prog:#2a2a4a}
+    .app{width:100%;height:100vh;background:var(--bg);display:flex;flex-direction:column;color:var(--text)}
+    .auth-screen{position:fixed;inset:0;background:var(--bg);z-index:300;padding:20px;overflow-y:auto}
+    .auth-logo{font-size:45px;background:linear-gradient(135deg,#58cc02,#1cb0f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .auth-title{font-weight:800;font-size:26px;background:linear-gradient(135deg,#58cc02,#1cb0f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .auth-tabs{display:flex;gap:8px;margin:20px 0}
+    .auth-tab{flex:1;padding:10px;text-align:center;font-weight:800;background:var(--bg3);border-radius:16px;cursor:pointer;color:var(--text2)}
+    .auth-tab.active{background:linear-gradient(135deg,#58cc02,#1cb0f6);color:#fff;box-shadow:0 3px 0 #45a501}
+    .auth-input{width:100%;padding:12px;border:2px solid var(--border);border-radius:14px;margin-bottom:10px;background:var(--bg2);color:var(--text)}
+    .auth-btn{width:100%;padding:14px;background:linear-gradient(135deg,#58cc02,#1cb0f6);border:none;border-bottom:4px solid #45a501;border-radius:14px;font-weight:800;color:#fff;cursor:pointer}
+    .main-header{padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+    .flag-icon{width:32px;height:32px;background:linear-gradient(135deg,#58cc02,#1cb0f6);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #45a501}
+    .streak-badge{background:var(--bg3);padding:3px 7px;border-radius:20px;font-weight:800;color:#ff7b00}
+    .gems-badge{background:var(--bg3);padding:3px 7px;border-radius:20px;font-weight:700;color:#1cb0f6}
+    .progress-bar{height:5px;background:var(--prog);border-radius:20px;margin:5px 12px}
+    .progress-fill{height:5px;width:0%;background:linear-gradient(90deg,#58cc02,#1cb0f6);border-radius:20px}
+    .tab-pane{display:none;flex:1;overflow:hidden}
+    .tab-pane.active{display:flex;flex-direction:column}
+    .path-scroll{flex:1;overflow-y:auto;padding:0 12px}
+    .unit-header{display:flex;justify-content:space-between;margin:8px 0 4px}
+    .path-node{display:flex;align-items:center;margin:2px 0;cursor:pointer}
+    .node-circle{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-right:8px;background:var(--bg);border:2px solid var(--border);box-shadow:0 3px 0 var(--border)}
+    .node-circle.completed{background:linear-gradient(135deg,#58cc02,#1cb0f6);border-color:#45a501;color:#fff}
+    .node-circle.current{background:linear-gradient(135deg,#58cc02,#1cb0f6);border-color:#0f7ab3;color:#fff}
+    .node-circle.chest{background:#ffd700;border-color:#e6b800}
+    .node-circle.chest.opened{background:#58cc02;border-color:#45a501;color:#fff}
+    .node-content{flex:1;background:var(--card);border-radius:8px;padding:6px 10px;border:1.5px solid var(--border)}
+    .bottom-nav{display:flex;justify-content:space-around;padding:8px;border-top:1.5px solid var(--border)}
+    .nav-item{opacity:0.5;cursor:pointer;text-align:center}
+    .nav-item.active{opacity:1;background:linear-gradient(135deg,rgba(88,204,2,0.15),rgba(28,176,246,0.15));border-radius:20px;padding:2px 8px}
+    .lesson-modal{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column}
+    .task-sentence{font-size:28px;font-weight:800;text-align:center;margin:20px 0}
+    .word-bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0}
+    .word-tile{background:var(--bg);padding:10px 18px;border-radius:24px;border:2px solid var(--border);box-shadow:0 3px 0 var(--border);cursor:pointer}
+    .choice-option{background:var(--bg3);padding:18px;border-radius:16px;border:2px solid var(--border);margin:8px 0;cursor:pointer;text-align:center}
+    .choice-option.selected{background:rgba(88,204,2,0.2);border-color:#58cc02}
+    .complete-input{width:100%;padding:18px;border:2px solid var(--border);border-radius:16px;font-size:18px;background:var(--bg2);color:var(--text);text-align:center}
+    .check-btn{background:linear-gradient(135deg,#58cc02,#1cb0f6);border:none;border-bottom:5px solid #45a501;padding:16px;border-radius:16px;font-weight:800;color:#fff;width:100%;cursor:pointer}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body class="light">
+<div class="app">
+  <!-- ЭКРАН ВХОДА -->
+  <div class="auth-screen" id="authScreen">
+    <div style="text-align:center"><div class="auth-logo">🦉⚡</div><div class="auth-title">DuolPluse</div></div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-tab="login">Вход</div>
+      <div class="auth-tab" data-tab="register">Регистрация</div>
+    </div>
+    <div id="loginForm">
+      <input class="auth-input" id="loginUsername" placeholder="Имя" value="test">
+      <input class="auth-input" id="loginPassword" type="password" placeholder="Пароль" value="123">
+      <button class="auth-btn" id="loginBtn">Войти</button>
+    </div>
+    <div id="registerForm" class="hidden">
+      <input class="auth-input" id="regUsername" placeholder="Имя">
+      <input class="auth-input" id="regPassword" type="password" placeholder="Пароль">
+      <input class="auth-input" id="regConfirm" type="password" placeholder="Подтвердите">
+      <button class="auth-btn" id="registerBtn">Регистрация</button>
+    </div>
+    <div id="authError" style="color:#ff4b4b;text-align:center;margin-top:10px"></div>
+    <p style="text-align:center;margin-top:20px;color:var(--muted)">Тест: test / 123</p>
+  </div>
+
+  <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
+  <div id="mainApp" style="display:none;flex-direction:column;height:100%">
+    <div class="main-header">
+      <div style="display:flex;align-items:center;gap:5px"><div class="flag-icon">🇬🇧</div><span>Английский</span></div>
+      <div style="display:flex;gap:5px">
+        <button id="themeToggle" style="background:var(--bg3);border:none;padding:3px 7px;border-radius:20px;cursor:pointer">🌙</button>
+        <span class="streak-badge">🔥 <span id="streakVal">0</span></span>
+        <span class="gems-badge">💎 <span id="gemsVal">50</span></span>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    
+    <div class="tab-pane active" id="homePane">
+      <div class="path-scroll"><div id="pathContainer"></div></div>
+      <div style="display:flex;justify-content:center;padding:8px"><span id="duoMessage">Начни учиться! 🔥</span><span style="font-size:28px;margin-left:8px">🦉⚡</span></div>
+    </div>
+    
+    <div class="tab-pane" id="profilePane">
+      <div style="padding:20px">
+        <div style="background:var(--card);border-radius:14px;padding:14px">
+          <h3 id="profileName">User</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+            <div style="background:var(--bg);padding:8px;border-radius:10px;text-align:center"><div style="font-weight:800;color:#1cb0f6" id="statStreak">0</div><div>🔥 Ударный режим</div></div>
+            <div style="background:var(--bg);padding:8px;border-radius:10px;text-align:center"><div style="font-weight:800;color:#1cb0f6" id="statGems">50</div><div>💎 Алмазы</div></div>
+            <div style="background:var(--bg);padding:8px;border-radius:10px;text-align:center"><div style="font-weight:800;color:#1cb0f6" id="statEnergy">5</div><div>⚡ Энергия</div></div>
+            <div style="background:var(--bg);padding:8px;border-radius:10px;text-align:center"><div style="font-weight:800;color:#1cb0f6" id="statLessons">0</div><div>📚 Уроков</div></div>
+          </div>
+        </div>
+        <button id="logoutBtn" style="width:100%;margin-top:20px;padding:14px;background:#ff4b4b;border:none;border-radius:14px;color:#fff;font-weight:800;cursor:pointer">🚪 Выйти</button>
+      </div>
+    </div>
+    
+    <div class="tab-pane" id="shopPane">
+      <div style="padding:20px">
+        <div style="background:var(--card);border-radius:14px;padding:14px">
+          <h3>🛒 Магазин</h3>
+          <p>💎 Алмазы: <span id="shopGems">50</span></p>
+          <div style="padding:10px;background:var(--bg);border-radius:10px;margin:8px 0;cursor:pointer" id="buyEnergy">⚡ +1 энергия — 100💎</div>
+          <div style="margin-top:16px">
+            <input class="auth-input" id="promoInput" placeholder="Промокод">
+            <button class="auth-btn" id="applyPromo" style="margin-top:8px">Применить</button>
+            <p style="margin-top:8px;font-size:12px;color:var(--muted)">123SD13FDDF = +1000💎<br>123WE11SDDQ = все уроки</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bottom-nav">
+      <div class="nav-item active" data-nav="home">🏠 Главная</div>
+      <div class="nav-item" data-nav="profile">👤 Профиль</div>
+      <div class="nav-item" data-nav="shop">🛒 Магазин</div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО УРОКА -->
+  <div class="lesson-modal hidden" id="lessonModal">
+    <div style="padding:14px;border-bottom:1.5px solid var(--border);display:flex;gap:8px">
+      <div style="display:flex;gap:3px;flex:1" id="progressLine"></div>
+      <button id="closeLesson" style="background:none;border:none;font-size:18px;cursor:pointer">✕</button>
+    </div>
+    <div style="flex:1;padding:16px;overflow-y:auto" id="modalQuestion"></div>
+    <div style="padding:16px"><button class="check-btn" id="checkLessonBtn">ПРОВЕРИТЬ</button></div>
+  </div>
+</div>
+
+<script>
+// БАЗА ЗАДАНИЙ
+const tasks = {
+  translate: [
+    {s:'Hello',c:['Привет']},{s:'Cat',c:['Кот']},{s:'Dog',c:['Собака']},{s:'Water',c:['Вода']},
+    {s:'I have a cat',c:['У','меня','есть','кот']},{s:'She reads',c:['Она','читает']}
+  ],
+  choice: [
+    {s:'mother',o:['отец','мать','сестра'],c:'мать'},{s:'pizza',o:['пицца','паста','суп'],c:'пицца'},
+    {s:'goodbye',o:['привет','пока','спасибо'],c:'пока'},{s:'apple',o:['яблоко','груша','банан'],c:'яблоко'}
+  ],
+  complete: [
+    {s:'Кофе и чай',p:'Coffee and ___',c:'tea'},{s:'Мой дом',p:'My house is ___',c:'big'},
+    {s:'Меню, пожалуйста',p:'The ___, please',c:'menu'},{s:'У меня бронь',p:'I have a ___',c:'reservation'}
+  ]
+};
+
+const units = [
+  {name:'📘 ОСНОВЫ',lessons:[
+    {type:'translate',icon:'📘',title:'Приветствия'},
+    {type:'choice',icon:'📘',title:'Семья'},
+    {type:'chest',icon:'🎁',title:'Сундук',reward:50},
+    {type:'translate',icon:'🔢',title:'Числа'}
+  ]},
+  {name:'🍕 ЕДА',lessons:[
+    {type:'complete',icon:'🍕',title:'Напитки'},
+    {type:'choice',icon:'🍽️',title:'Ресторан'},
+    {type:'chest',icon:'🎁',title:'Сундук',reward:75},
+    {type:'translate',icon:'🥤',title:'Фрукты'}
+  ]},
+  {name:'✈️ ПУТЕШЕСТВИЯ',lessons:[
+    {type:'choice',icon:'✈️',title:'Аэропорт'},
+    {type:'complete',icon:'🏨',title:'Отель'},
+    {type:'chest',icon:'🎁',title:'Сундук',reward:100}
+  ]}
+];
+
+// СОСТОЯНИЕ
+let users = JSON.parse(localStorage.getItem('duo_users')) || {};
+let user = localStorage.getItem('duo_user') || null;
+let data = {lessons:0,streak:0,gems:50,energy:5,chests:[]};
+let curTask=0, curTasks=[], selected=null, answer='', selectedWords=[], availableWords=[];
+
+if(user && users[user]) data = users[user];
+
+// ФУНКЦИИ
+function save(){ if(user){ users[user]=data; localStorage.setItem('duo_users',JSON.stringify(users)); } }
+function updateUI(){
+  document.getElementById('streakVal').textContent=data.streak;
+  document.getElementById('gemsVal').textContent=data.gems;
+  document.getElementById('statStreak').textContent=data.streak;
+  document.getElementById('statGems').textContent=data.gems;
+  document.getElementById('statEnergy').textContent=data.energy;
+  document.getElementById('statLessons').textContent=data.lessons;
+  document.getElementById('shopGems').textContent=data.gems;
+  document.getElementById('profileName').textContent=user||'User';
+  const total=units.flatMap(u=>u.lessons.filter(l=>l.type!=='chest')).length;
+  document.getElementById('progressFill').style.width=(data.lessons/total*100)+'%';
+}
+
+function renderPath(){
+  const div=document.getElementById('pathContainer');
+  let html='',cnt=0;
+  units.forEach((u,ui)=>{
+    html+='<div class="unit-header"><span>'+u.name+'</span></div>';
+    u.lessons.forEach((l,li)=>{
+      const isLes=l.type!=='chest';
+      const done=isLes?cnt<data.lessons:data.lessons>cnt+2;
+      const cur=isLes?cnt===data.lessons:false;
+      let cls='node-circle', ico=l.icon;
+      if(l.type==='chest'){ cls+=' chest'; if(data.chests.includes(ui+'-'+li)){ cls+=' opened'; ico='✅'; } }
+      if(done){ cls+=' completed'; ico='✅'; }
+      else if(cur){ cls+=' current'; ico='⭐'; }
+      html+='<div class="path-node" data-u="'+ui+'" data-l="'+li+'" data-t="'+l.type+'"><div class="'+cls+'">'+ico+'</div><div class="node-content"><div>'+l.title+'</div><div>'+(l.type==='chest'?'💎 +'+l.reward:'⭐ +10 XP')+'</div></div></div>';
+      if(isLes) cnt++;
+    });
+  });
+  div.innerHTML=html;
+  document.querySelectorAll('.path-node').forEach(n=>n.addEventListener('click',()=>openLesson(n.dataset.u,n.dataset.l,n.dataset.t)));
+}
+
+function openLesson(u,l,t){
+  const les=units[u].lessons[l];
+  if(t==='chest'){
+    const id=u+'-'+l;
+    if(data.chests.includes(id)) return alert('Уже открыт!');
+    if(data.lessons>=2){ data.gems+=les.reward; data.chests.push(id); save(); updateUI(); renderPath(); alert('+'+les.reward+'💎'); }
+    else alert('Пройдите больше уроков!');
+    return;
+  }
+  let cnt=0;
+  for(let i=0;i<u;i++) cnt+=units[i].lessons.filter(x=>x.type!=='chest').length;
+  for(let j=0;j<l;j++) if(units[u].lessons[j].type!=='chest') cnt++;
+  if(cnt>data.lessons) return alert('Пройдите предыдущие уроки!');
+  if(data.energy<=0) return alert('Нет энергии!');
+  
+  curTask=0;
+  const pool=tasks[t]||tasks.translate;
+  curTasks=[];
+  for(let i=0;i<5;i++) curTasks.push({...pool[Math.floor(Math.random()*pool.length)]});
+  renderTask(0);
+  updateProgressLine();
+  document.getElementById('lessonModal').classList.remove('hidden');
+}
+
+function renderTask(i){
+  const t=curTasks[i];
+  const cont=document.getElementById('modalQuestion');
+  selected=null; answer=''; selectedWords=[]; availableWords=[];
+  
+  if(t.o){ // choice
+    cont.innerHTML='<div style="font-size:18px;margin-bottom:16px">Выберите перевод</div><div class="task-sentence">'+t.s+'</div><div id="choiceArea"></div>';
+    const area=document.getElementById('choiceArea');
+    t.o.forEach(o=>{
+      const d=document.createElement('div'); d.className='choice-option'; d.textContent=o;
+      d.addEventListener('click',()=>{ document.querySelectorAll('.choice-option').forEach(x=>x.classList.remove('selected')); d.classList.add('selected'); selected=o; });
+      area.appendChild(d);
+    });
+  } else if(t.p){ // complete
+    cont.innerHTML='<div style="font-size:18px;margin-bottom:16px">Закончите предложение</div><div class="task-sentence">'+t.s+'</div><div style="margin:20px 0;font-size:20px">'+t.p+'</div><input class="complete-input" id="completeInput" placeholder="Введите слово">';
+    document.getElementById('completeInput').addEventListener('input',e=>answer=e.target.value.trim().toLowerCase());
+  } else { // translate
+    cont.innerHTML='<div style="font-size:18px;margin-bottom:16px">Переведите</div><div class="task-sentence">'+t.s+'</div><div style="min-height:50px;background:var(--bg3);border-radius:12px;padding:10px;margin:10px 0" id="selectedBox"></div><div class="word-bank" id="wordBank"></div>';
+    availableWords = [...t.c];
+    renderTranslateWords();
+  }
+  document.getElementById('checkLessonBtn').disabled=false;
+}
+
+function renderTranslateWords(){
+  const sb=document.getElementById('selectedBox'), wb=document.getElementById('wordBank');
+  sb.innerHTML=''; wb.innerHTML='';
+  selectedWords.forEach((w,i)=>{
+    const c=document.createElement('span'); c.style.cssText='background:var(--bg);padding:8px 14px;border-radius:20px;margin:4px;display:inline-block;cursor:pointer;border:1.5px solid var(--border)';
+    c.innerHTML=w+' ✕'; c.onclick=()=>{ selectedWords.splice(i,1); availableWords.push(w); renderTranslateWords(); };
+    sb.appendChild(c);
+  });
+  availableWords.forEach(w=>{
+    const t=document.createElement('span'); t.className='word-tile'; t.textContent=w;
+    t.onclick=()=>{ const idx=availableWords.indexOf(w); if(idx>-1){ availableWords.splice(idx,1); selectedWords.push(w); renderTranslateWords(); } };
+    wb.appendChild(t);
+  });
+}
+
+function updateProgressLine(){
+  const l=document.getElementById('progressLine');
+  l.innerHTML=Array(5).fill(0).map((_,i)=>'<div style="height:4px;flex:1;background:'+(i<curTask?'#58cc02':i===curTask?'#1cb0f6':'var(--prog)')+';border-radius:6px"></div>').join('');
+}
+
+// ПРОВЕРКА ОТВЕТА
+document.getElementById('checkLessonBtn').addEventListener('click',()=>{
+  const t=curTasks[curTask];
+  let ok=false;
+  if(t.o) ok=selected===t.c;
+  else if(t.p) ok=answer===t.c;
+  else ok=selectedWords.map(w=>w.toLowerCase()).join(' ')===t.c.map(w=>w.toLowerCase()).join(' ');
+  
+  if(!ok) return alert('❌ Неправильно');
+  
+  curTask++;
+  if(curTask<5){ renderTask(curTask); updateProgressLine(); }
+  else {
+    data.energy--; data.streak++; data.gems+=10; data.lessons++;
+    save(); updateUI(); renderPath();
+    document.getElementById('lessonModal').classList.add('hidden');
+    document.getElementById('duoMessage').textContent='Молодец! +'+data.streak+'🔥';
+  }
+});
+
+// ЗАКРЫТИЕ УРОКА
+document.getElementById('closeLesson').addEventListener('click',()=>document.getElementById('lessonModal').classList.add('hidden'));
+
+// ТЕМА
+document.getElementById('themeToggle').addEventListener('click',function(){
+  document.body.classList.toggle('dark'); document.body.classList.toggle('light');
+  this.textContent=document.body.classList.contains('dark')?'☀️':'🌙';
+});
+
+// АВТОРИЗАЦИЯ
+document.querySelectorAll('.auth-tab').forEach(t=>t.addEventListener('click',function(){
+  document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));
+  this.classList.add('active');
+  document.getElementById('loginForm').classList.toggle('hidden',this.dataset.tab!=='login');
+  document.getElementById('registerForm').classList.toggle('hidden',this.dataset.tab!=='register');
+}));
+
+document.getElementById('loginBtn').addEventListener('click',()=>{
+  const u=document.getElementById('loginUsername').value.trim(), p=document.getElementById('loginPassword').value;
+  if(users[u]&&users[u].password===p){
+    user=u; localStorage.setItem('duo_user',user); data=users[u];
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('mainApp').style.display='flex';
+    updateUI(); renderPath();
+  } else document.getElementById('authError').textContent='Неверные данные';
+});
+
+document.getElementById('registerBtn').addEventListener('click',()=>{
+  const u=document.getElementById('regUsername').value.trim(), p=document.getElementById('regPassword').value, c=document.getElementById('regConfirm').value;
+  if(!u||!p) return document.getElementById('authError').textContent='Заполните поля';
+  if(p!==c) return document.getElementById('authError').textContent='Пароли не совпадают';
+  if(users[u]) return document.getElementById('authError').textContent='Пользователь существует';
+  users[u]={password:p,lessons:0,streak:0,gems:50,energy:5,chests:[]};
+  localStorage.setItem('duo_users',JSON.stringify(users));
+  user=u; localStorage.setItem('duo_user',user); data=users[u];
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('mainApp').style.display='flex';
+  updateUI(); renderPath();
+});
+
+// АВТОВХОД
+if(user){ document.getElementById('authScreen').classList.add('hidden'); document.getElementById('mainApp').style.display='flex'; updateUI(); renderPath(); }
+
+// ВЫХОД
+document.getElementById('logoutBtn').addEventListener('click',()=>{
+  user=null; localStorage.removeItem('duo_user');
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('authScreen').classList.remove('hidden');
+});
+
+// НАВИГАЦИЯ
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',function(){
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active'));
+  this.classList.add('active');
+  document.getElementById(this.dataset.nav+'Pane').classList.add('active');
+  updateUI();
+}));
+
+// МАГАЗИН
+document.getElementById('buyEnergy').addEventListener('click',()=>{
+  if(data.gems>=100){ data.gems-=100; data.energy=Math.min(data.energy+1,5); save(); updateUI(); alert('Энергия пополнена!'); }
+  else alert('Недостаточно алмазов');
+});
+
+document.getElementById('applyPromo').addEventListener('click',()=>{
+  const code=document.getElementById('promoInput').value.trim().toUpperCase();
+  if(code==='123SD13FDDF'){ data.gems+=1000; save(); updateUI(); alert('+1000 алмазов!'); }
+  else if(code==='123WE11SDDQ'){ data.lessons=units.flatMap(u=>u.lessons.filter(l=>l.type!=='chest')).length; save(); updateUI(); renderPath(); alert('Все уроки открыты!'); }
+  else alert('Неверный промокод');
+  document.getElementById('promoInput').value='';
+});
+</script>
+</body>
+</html>
